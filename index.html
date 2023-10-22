@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do List</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    #header h1 {
+        font-size: 36px;
+        color: #3498db;
+        margin: 0;
+    }
+
+    #inputContainer {
+        text-align: center;
+        animation: slideUp 0.5s ease-in-out;
+        position: relative;
+        margin-bottom: 20px;
+        background-color: rgba(236, 240, 241, 0.7);
+        border-radius: 8px;
+        padding: 15px;
+    }
+
+    #inputField {
+        padding: 15px;
+        font-size: 18px;
+        border: 1px solid #34495e;
+        border-radius: 4px;
+        margin-right: 10px;
+        width: 300px;
+        background-color: rgba(236, 240, 241, 0.9);
+    }
+
+    #addButton {
+        padding: 15px;
+        font-size: 18px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    #addButton:hover {
+        background-color: #2980b9;
+    }
+
+    #tasksContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .taskDiv {
+        width: 300px;
+        height: auto;
+        margin: 10px;
+        padding: 15px;
+        background-color: rgba(52, 73, 94, 0.9);
+        border: 2px solid #2c3e50;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .taskDiv:hover {
+        background-color: rgba(44, 62, 80, 1);
+        transform: translateY(-5px);
+    }
+
+    .taskDiv input[type="checkbox"] {
+        margin-bottom: 10px;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background-color: #3498db;
+        border: 2px solid #34495e;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .taskDiv input[type="checkbox"]:checked {
+        background-color: #2ecc71; /* Tint of green for checked state */
+        border: 2px solid #2ecc71; /* Border color for checked state */
+    }
+
+    .taskDiv label {
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #ecf0f1;
+    }
+
+    .taskDiv textarea,
+    .taskDiv select,
+    .taskDiv button {
+        background-color: rgba(236, 240, 241, 0.9); /* Task box background color with transparency */
+        border: 1px solid #2c3e50; /* Task box border color */
+        border-radius: 4px; /* Rounded corners */
+    }
+
+    .taskDiv textarea {
+        resize: none;
+        padding: 10px;
+        font-size: 14px;
+        width: calc(100% - 20px);
+        margin-bottom: 10px;
+        color: #34495e;
+    }
+
+    .taskDiv select {
+        padding: 10px;
+        font-size: 14px;
+        width: calc(100% - 20px);
+        color: #34495e;
+    }
+
+    .taskDiv button {
+        padding: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: auto;
+    }
+
+    .taskDiv button.removeButton {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .taskDiv button.removeButton:hover {
+        background-color: #c0392b;
+    }
+
+    .taskDiv .buttonContainer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .taskDiv .startButton,
+    .taskDiv .stopButton {
+        flex: 1;
+        margin-right: 5px;
+        padding: 15px;
+        font-size: 16px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .taskDiv .startButton:hover,
+    .taskDiv .stopButton:hover {
+        background-color: #2980b9;
+    }
+
+    .taskDiv .timerDisplay {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #3498db;
+    }
+
+    #scoreboard {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        text-align: right;
+        font-size: 18px;
+        color: white;
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: rgba(44, 62, 80, 0.8);
+    }
+
+    #scoreboard p {
+        margin: 5px 0;
+    }
+
+    #scoreboard span {
+        font-weight: bold;
+        color: #ffcc00;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div id="header">
+    <h1>To-Do List</h1>
+</div>
+
+<div id="inputContainer">
+    <input type="text" id="inputField" placeholder="Enter text">
+    <button id="addButton" onclick="addToList()">Add</button>
+</div>
+
+<div id="tasksContainer"></div>
+
+<div id="scoreboard">
+    <p>Total Tasks: <span id="totalTasks">0</span></p>
+    <p>Tasks Done: <span id="tasksDone">0</span></p>
+    <p>Tasks Remaining: <span id="tasksRemaining">0</span></p>
+</div>
+
+<script>
+    var totalTasks = 0;
+    var tasksDone = 0;
+
+    function addToList() {
+        var inputValue = document.getElementById('inputField').value;
+
+        if (inputValue.trim() !== '') {
+            totalTasks++;
+
+            var taskDiv = document.createElement('div');
+            taskDiv.className = 'taskDiv';
+
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.onchange = function () {
+                updateScoreboard();
+            };
+
+            var label = document.createElement('label');
+            label.innerHTML = inputValue;
+
+            var description = document.createElement('textarea');
+            description.placeholder = 'Task Description';
+
+            var timeDropdown = document.createElement('select');
+            timeDropdown.innerHTML = '<option value="15">15 mins</option><option value="30">30 mins</option><option value="45">45 mins</option><option value="60">1 hour</option>';
+
+            var startButton = document.createElement('button');
+            startButton.innerHTML = 'Start';
+            startButton.className = 'startButton';
+            startButton.onclick = function () {
+                startTimer(timeDropdown.value, taskDiv);
+            };
+
+            var stopButton = document.createElement('button');
+            stopButton.innerHTML = 'Stop';
+            stopButton.className = 'stopButton';
+            stopButton.onclick = function () {
+                stopTimer(taskDiv);
+            };
+            stopButton.disabled = true;
+
+            var removeButton = document.createElement('button');
+            removeButton.innerHTML = 'Remove';
+            removeButton.className = 'removeButton';
+            removeButton.onclick = function () {
+                totalTasks--;
+                updateScoreboard();
+                taskDiv.remove();
+            };
+
+            var timerDisplay = document.createElement('div');
+            timerDisplay.className = 'timerDisplay';
+
+            taskDiv.appendChild(checkbox);
+            taskDiv.appendChild(label);
+            taskDiv.appendChild(description);
+            taskDiv.appendChild(timeDropdown);
+            var buttonContainer = document.createElement('div');
+            buttonContainer.className = 'buttonContainer';
+            buttonContainer.appendChild(startButton);
+            buttonContainer.appendChild(stopButton);
+            taskDiv.appendChild(buttonContainer);
+            taskDiv.appendChild(removeButton);
+            taskDiv.appendChild(timerDisplay);
+
+            document.getElementById('tasksContainer').appendChild(taskDiv);
+            updateScoreboard();
+
+            document.getElementById('inputField').value = '';
+        }
+    }
+
+    function stopTimer(taskDiv) {
+        clearInterval(taskDiv.timerInterval);
+        toggleButtonAvailability(taskDiv, true);
+    }
+
+    function startTimer(minutes, taskDiv) {
+        var seconds = minutes * 60;
+        var currentTimer = seconds;
+
+        updateTimerDisplay(taskDiv, currentTimer);
+
+        var timerInterval = setInterval(function () {
+            currentTimer--;
+
+            if (currentTimer <= 0) {
+                clearInterval(timerInterval);
+                updateTimerDisplay(taskDiv, 0);
+                toggleButtonAvailability(taskDiv, true);
+            } else {
+                updateTimerDisplay(taskDiv, currentTimer);
+            }
+        }, 1000);
+
+        taskDiv.timerInterval = timerInterval;
+        toggleButtonAvailability(taskDiv, false);
+    }
+
+    function toggleButtonAvailability(taskDiv, isDisabled) {
+        var startButton = taskDiv.querySelector('.startButton');
+        var stopButton = taskDiv.querySelector('.stopButton');
+
+        startButton.disabled = !isDisabled;
+        stopButton.disabled = isDisabled;
+    }
+
+    function updateTimerDisplay(taskDiv, currentTimer) {
+        var minutes = Math.floor(currentTimer / 60);
+        var seconds = currentTimer % 60;
+
+        var formattedTime = padZero(minutes) + ':' + padZero(seconds);
+
+        taskDiv.querySelector('.timerDisplay').innerText = formattedTime;
+    }
+
+    function padZero(num) {
+        return num < 10 ? '0' + num : num;
+    }
+
+    function updateScoreboard() {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        tasksDone = Array.from(checkboxes).filter(function (checkbox) {
+            return checkbox.checked;
+        }).length;
+
+        var tasksRemaining = totalTasks - tasksDone;
+
+        document.getElementById('totalTasks').innerText = totalTasks;
+        document.getElementById('tasksDone').innerText = tasksDone;
+        document.getElementById('tasksRemaining').innerText = tasksRemaining;
+    }
+</script>
+
+</body>
+</html>
